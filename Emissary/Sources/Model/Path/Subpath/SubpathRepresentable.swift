@@ -1,0 +1,40 @@
+//
+//  SubpathRepresentable.swift
+//  Emissary
+//
+//  Created by Jordan Kay on 3/13/19.
+//  Copyright © 2019 CultivR. All rights reserved.
+//
+
+public protocol SubpathRepresentable {
+    associatedtype PathComponents: PathComponent
+    
+    var pathID: String? { get }
+    
+    static var component: PathComponents { get }
+}
+
+public extension SubpathRepresentable {
+    var pathID: String? {
+        return nil
+    }
+    
+    var subpathToResource: Subpath {
+        let components = ([Self.component, pathID] as [PathComponent?]).compactMap { $0 }
+        return .init(components: components)
+    }
+    
+    static var subpath: Subpath {
+        return .init(components: [component])
+    }
+    
+    static func subpath(to string: String) -> Subpath {
+        let components: [PathComponent] = [Self.component, string]
+        return .init(components: components)
+    }
+    
+    static func subpath(to pathComponent: PathComponents) -> Subpath {
+        let components = [Self.component, pathComponent]
+        return .init(components: components)
+    }
+}

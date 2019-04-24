@@ -18,6 +18,7 @@ public protocol API {
     var apiKey: Parameter<ParameterNames>? { get }
     
     static var baseURL: URL { get }
+    static var responseFormat: ResponseFormat { get }
     static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy { get }
     static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy { get }
     
@@ -30,6 +31,7 @@ public extension API {
     var customHeaderParameters: [Parameter<ParameterNames>] { return [] }
     var apiKey: Parameter<ParameterNames>? { return nil }
     
+    static var responseFormat: ResponseFormat { return .plain }
     static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy { return .iso8601 }
     static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy { return .iso8601 }
     
@@ -102,7 +104,7 @@ private extension API {
     }
     
     func headers(for payload: Payload?) -> [Header] {
-        var headers: [Header] = []
+        var headers: [Header] = [.accept(.encoded(.json))]
         
         payload.map {
             headers += $0.headers
@@ -164,7 +166,12 @@ private extension API {
     
     static func parse<Resource: Decodable>(_ data: Data) throws -> Resource {
         do {
-            return try decoder.decode(Resource.self, from: data)
+            switch responseFormat {
+            case .plain:
+                return try decoder.decode(Resource.self, from: data)
+            case .jsonAPI:
+                return try decoder.decode(Wrapper<Resource>.self, from: data).data
+            }
         } catch {
             throw NetworkError.couldNotParseData(data, error)
         }

@@ -19,6 +19,7 @@ public protocol API {
     
     static var baseURL: URL { get }
     static var responseFormat: ResponseFormat { get }
+    static var dateFormat: String? { get }
     static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy { get }
     static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy { get }
     
@@ -32,8 +33,15 @@ public extension API {
     var apiKey: Parameter<ParameterNames>? { return nil }
     
     static var responseFormat: ResponseFormat { return .plain }
-    static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy { return .iso8601 }
-    static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy { return .iso8601 }
+    static var dateFormat: String? { return nil }
+    
+    static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy {
+        return dateFormatter.map(JSONDecoder.DateDecodingStrategy.formatted) ?? .iso8601
+    }
+    
+    static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy {
+        return dateFormatter.map(JSONEncoder.DateEncodingStrategy.formatted) ?? .iso8601
+    }
     
     func getResource<Resource: Decodable>(at path: Path) -> Task<Void, Resource, NetworkError> {
         return request(method: .get, path: path, parse: Self.parse)
@@ -101,6 +109,10 @@ private extension API {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = dateEncodingStrategy
         return encoder
+    }
+    
+    static var dateFormatter: DateFormatter? {
+        return dateFormat.map(DateFormatter.init)
     }
     
     func headers(for payload: Payload?) -> [Header] {

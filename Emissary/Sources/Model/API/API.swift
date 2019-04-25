@@ -101,6 +101,7 @@ public extension API {
 private extension API {
     static var decoder: JSONDecoder {
         let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = dateDecodingStrategy
         return decoder
     }

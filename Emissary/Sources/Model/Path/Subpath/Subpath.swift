@@ -10,6 +10,8 @@ public struct Subpath {
     let components: [PathComponent]
 }
 
-public func +(lhs: Subpath, rhs: Subpath) -> Path {
-    return .init(components: lhs.components + rhs.components)
+extension Subpath: SubpathAppendable {
+    public func appending(_ subpath: Subpath) -> Subpath {
+        return .init(components: components + subpath.components)
+    }
 }

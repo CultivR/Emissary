@@ -16,8 +16,10 @@ extension Path {
     }
 }
 
-public func +(lhs: Path, rhs: Subpath) -> Path {
-    return .init(components: lhs.components + rhs.components)
+extension Path: SubpathAppendable {
+    public func appending(_ subpath: Subpath) -> Path {
+        return .init(components: components + subpath.components)
+    }
 }
 
 private extension String {

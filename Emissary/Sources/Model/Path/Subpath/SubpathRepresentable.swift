@@ -24,6 +24,10 @@ public extension SubpathRepresentable {
         return .init(components: components)
     }
     
+    func subpathToResource(to pathComponent: PathComponents) -> Path {
+        return .init(components: subpathToResource.components + [pathComponent])
+    }
+    
     static var subpath: Subpath {
         return .init(components: [component])
     }

@@ -13,6 +13,11 @@ public extension PathAccessible {
         return .init(components: subpathToResource.components)
     }
     
+    func pathToResource(to pathComponent: PathComponents) -> Path {
+        let subPath = subpathToResource(to: pathComponent)
+        return .init(components: subPath.components)
+    }
+    
     static var path: Path {
         return .init(components: subpath.components)
     }

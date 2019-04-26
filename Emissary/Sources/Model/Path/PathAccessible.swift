@@ -22,13 +22,13 @@ public extension PathAccessible {
         return .init(components: subpath.components)
     }
     
-    static func path(to string: String) -> Path {
-        let subpath = self.subpath(to: string)
+    static func path(to pathComponent: PathComponents) -> Path {
+        let subpath = self.subpath(to: pathComponent)
         return .init(components: subpath.components)
     }
     
-    static func path(to pathComponent: PathComponents) -> Path {
-        let subpath = self.subpath(to: pathComponent)
+    static func path<Value: CustomStringConvertible>(to value: Value) -> Path {
+        let subpath = self.subpath(to: value)
         return .init(components: subpath.components)
     }
 }

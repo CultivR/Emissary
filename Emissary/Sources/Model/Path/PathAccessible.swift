@@ -6,12 +6,7 @@
 //  Copyright © 2019 CultivR. All rights reserved.
 //
 
-public protocol PathAccessible: SubpathRepresentable {
-    var pathToResource: Path { get }
-    
-    static func path(to string: String) -> Path
-    static func path(to pathComponent: PathComponents) -> Path
-}
+public protocol PathAccessible: SubpathRepresentable {}
 
 public extension PathAccessible {
     var pathToResource: Path {

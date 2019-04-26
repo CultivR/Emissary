@@ -7,20 +7,23 @@
 //
 
 public protocol SubpathRepresentable {
+    typealias PathID = CustomStringConvertible
+    
     associatedtype PathComponents: PathComponent
     
-    var pathID: String? { get }
+    var pathID: PathID? { get }
     
     static var component: PathComponents { get }
 }
 
 public extension SubpathRepresentable {
-    var pathID: String? {
+    var pathID: PathID? {
         return nil
     }
     
     var subpathToResource: Subpath {
-        let components = ([Self.component, pathID] as [PathComponent?]).compactMap { $0 }
+        let pathIDString = pathID.map { String(describing: $0) }
+        let components = ([Self.component, pathIDString] as [PathComponent?]).compactMap { $0 }
         return .init(components: components)
     }
     

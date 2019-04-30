@@ -88,6 +88,11 @@ public extension API {
         return request(method: .put, path: path, payload: payload, parse: Self.parse)
     }
     
+    func patchResource<Resource: Encodable, ReturnedResource: Decodable>(_ resource: Resource, at path: Path) -> Task<Void, ReturnedResource, NetworkError> {
+        let payload = Payload(for: resource)
+        return request(method: .patch, path: path, payload: payload, parse: Self.parse)
+    }
+    
     func deleteResource(at path: Path) -> BasicTask {
         return request(method: .delete, path: path) { _ in }
     }

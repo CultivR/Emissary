@@ -108,6 +108,7 @@ private extension API {
     
     static var encoder: JSONEncoder {
         let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
         encoder.dateEncodingStrategy = dateEncodingStrategy
         return encoder
     }

@@ -59,7 +59,7 @@ public extension API {
     
     func getResources<Resource: Decodable & Collection, ResourceParameterNames>(specifiedBy parameters: [Parameter<ResourceParameterNames>]) -> Task<Void, Resource, NetworkError> where Resource.Element: PathAccessible {
         let path = Resource.Element.path
-        let queryItems = parameters.map(URLQueryItem.init)
+        let queryItems = parameters.map(queryItem)
         return request(method: .get, path: path, queryItems: queryItems, parse: Self.parse)
     }
     
@@ -68,7 +68,7 @@ public extension API {
     }
     
     func post<Progress, ResourceParameterNames>(to path: Path, specifying parameters: [Parameter<ResourceParameterNames>]) -> Task<Progress, Void, NetworkError> {
-        let queryItems = parameters.map(URLQueryItem.init)
+        let queryItems = parameters.map(queryItem)
         return request(method: .post, path: path, queryItems: queryItems) { _ in }
     }
     
@@ -137,10 +137,18 @@ private extension API {
             headers.append(.authorization($0))
         }
         customHeaderParameters.forEach {
-            headers.append(.custom(key: $0.key.rawValue, value: $0.value))
+            let key = $0.keyName
+            let value = Self.value(for: $0)
+            headers.append(.custom(key: key, value: value))
         }
         
         return headers
+    }
+    
+    func queryItem<ParameterNames>(for parameter: Parameter<ParameterNames>) -> URLQueryItem {
+        let name = parameter.keyName
+        let value = Self.value(for: parameter)
+        return .init(name: name, value: value)
     }
     
     func request<Resource, Progress>(method: Method, path: Path, queryItems: [URLQueryItem] = [], payload: Payload? = nil, parse: @escaping (Data) throws -> Resource) -> Task<Progress, Resource, NetworkError> {
@@ -156,6 +164,11 @@ private extension API {
             Self.indicateRequestActive(true)
             dataTask.resume()
         }
+    }
+    
+    static func value<ParameterNames>(for parameter: Parameter<ParameterNames>) -> String {
+        let formatter = dateFormatter ?? ISO8601DateFormatter()
+        return parameter.valueName(with: formatter)
     }
     
     static func completionHandler<Resource>(fulfill: @escaping (Resource) -> Void, reject: @escaping (NetworkError) -> Void, parse: @escaping (Data) throws -> Resource) -> (Data?, URLResponse?, Error?) -> Void {
@@ -199,11 +212,5 @@ private extension API {
         } catch {
             throw NetworkError.couldNotParseData(data, error)
         }
-    }
-}
-
-private extension URLQueryItem {
-    init<T>(parameter: Parameter<T>) {
-        self.init(name: parameter.key.rawValue, value: parameter.value)
     }
 }

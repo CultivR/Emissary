@@ -47,6 +47,11 @@ public extension API {
         return request(method: .get, path: path, parse: Self.parse)
     }
     
+    func getResource<Resource: Decodable, ResourceParameterNames>(at path: Path, specifiedBy parameters: [Parameter<ResourceParameterNames>]) -> Task<Void, Resource, NetworkError> {
+        let queryItems = parameters.map(queryItem)
+        return request(method: .get, path: path, queryItems: queryItems, parse: Self.parse)
+    }
+    
     func getResources<Resource: Decodable & Collection>() -> Task<Void, Resource, NetworkError> where Resource.Element: PathAccessible {
         let path = Resource.Element.path
         return request(method: .get, path: path, parse: Self.parse)

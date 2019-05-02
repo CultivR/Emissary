@@ -7,5 +7,6 @@
 //
 
 @_exported import UIKit
+@_exported import SafariServices
 @_exported import KeychainAccess
 @_exported import SwiftTask

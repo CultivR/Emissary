@@ -6,13 +6,13 @@
 //  Copyright © 2019 CultivR. All rights reserved.
 //
 
-public enum Authorization {
+public enum AuthorizationType {
     case basic(username: String, password: String)
     case bearer(credentials: String)
     case jwt(token: String)
 }
 
-extension Authorization: CustomStringConvertible {
+extension AuthorizationType: CustomStringConvertible {
     public var description: String {
         switch self {
         case let .basic(username, password):

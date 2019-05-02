@@ -10,7 +10,7 @@ enum Header {
     case accept(ContentType)
     case contentType(ContentType)
     case contentLength(Int)
-    case authorization(Authorization)
+    case authorization(AuthorizationType)
     case custom(key: String, value: String)
 }
 

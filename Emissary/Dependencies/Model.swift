@@ -6,5 +6,6 @@
 //  Copyright © 2019 Cultivr. All rights reserved.
 //
 
+@_exported import SafariServices
 @_exported import KeychainAccess
 @_exported import SwiftTask

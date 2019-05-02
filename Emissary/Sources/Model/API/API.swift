@@ -13,7 +13,7 @@ public protocol API {
     associatedtype ErrorType: Error & Decodable
     
     var customBaseURL: URL? { get }
-    var authorization: Authorization? { get }
+    var authorization: AuthorizationType? { get }
     var customHeaderParameters: [Parameter<ParameterNames>] { get }
     var apiKey: Parameter<ParameterNames>? { get }
     
@@ -28,7 +28,7 @@ public protocol API {
 
 public extension API {
     var customBaseURL: URL? { return nil }
-    var authorization: Authorization? { return nil }
+    var authorization: AuthorizationType? { return nil }
     var customHeaderParameters: [Parameter<ParameterNames>] { return [] }
     var apiKey: Parameter<ParameterNames>? { return nil }
     
@@ -41,6 +41,12 @@ public extension API {
     
     static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy {
         return dateFormatter.map(JSONEncoder.DateEncodingStrategy.formatted) ?? .iso8601
+    }
+    
+    func queryItem<ParameterNames>(for parameter: Parameter<ParameterNames>) -> URLQueryItem {
+        let name = parameter.nameString
+        let value = Self.value(for: parameter)
+        return .init(name: name, value: value)
     }
     
     func getResource<Resource: Decodable>(at path: Path) -> Task<Void, Resource, NetworkError> {
@@ -70,6 +76,11 @@ public extension API {
     func post<Progress, ResourceParameterNames>(to path: Path, specifying parameters: [Parameter<ResourceParameterNames>]) -> Task<Progress, Void, NetworkError> {
         let queryItems = parameters.map(queryItem)
         return request(method: .post, path: path, queryItems: queryItems) { _ in }
+    }
+    
+    func post<ReturnedResource: Decodable, Progress, ResourceParameterNames>(to path: Path, specifying parameters: [Parameter<ResourceParameterNames>]) -> Task<Progress, ReturnedResource, NetworkError> {
+        let payload = Payload(urlEncodedParameters: parameters)
+        return request(method: .post, path: path, payload: payload, parse: Self.parse)
     }
     
     func postResource<Resource: Encodable, Progress>(_ resource: Resource, at path: Path) -> Task<Progress, Void, NetworkError> {
@@ -137,18 +148,12 @@ private extension API {
             headers.append(.authorization($0))
         }
         customHeaderParameters.forEach {
-            let key = $0.keyName
+            let key = $0.nameString
             let value = Self.value(for: $0)
             headers.append(.custom(key: key, value: value))
         }
         
         return headers
-    }
-    
-    func queryItem<ParameterNames>(for parameter: Parameter<ParameterNames>) -> URLQueryItem {
-        let name = parameter.keyName
-        let value = Self.value(for: parameter)
-        return .init(name: name, value: value)
     }
     
     func request<Resource, Progress>(method: Method, path: Path, queryItems: [URLQueryItem] = [], payload: Payload? = nil, parse: @escaping (Data) throws -> Resource) -> Task<Progress, Resource, NetworkError> {
@@ -168,7 +173,7 @@ private extension API {
     
     static func value<ParameterNames>(for parameter: Parameter<ParameterNames>) -> String {
         let formatter = dateFormatter ?? ISO8601DateFormatter()
-        return parameter.valueName(with: formatter)
+        return parameter.valueString(with: formatter)
     }
     
     static func completionHandler<Resource>(fulfill: @escaping (Resource) -> Void, reject: @escaping (NetworkError) -> Void, parse: @escaping (Data) throws -> Resource) -> (Data?, URLResponse?, Error?) -> Void {

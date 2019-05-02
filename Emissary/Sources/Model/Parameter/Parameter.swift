@@ -6,26 +6,28 @@
 //  Copyright © 2018 CultivR. All rights reserved.
 //
 
-public struct Parameter<ParameterNames: ParameterName> {
-    public typealias Value = CustomStringConvertible
-    
-    private let key: ParameterNames
-    private let value: Value
+public struct Parameter<Name: ParameterName> {    
+    private let name: Name
+    private let value: ParameterValue
 }
 
 extension Parameter {
-    var keyName: String {
-        return key.rawValue
+    var nameString: String {
+        return name.rawValue
     }
     
-    func valueName(with formatter: Formatter) -> String {
+    var valueString: String {
+        return value.description
+    }
+    
+    func valueString(with formatter: Formatter) -> String {
         return (value as? Date).flatMap(formatter.string) ?? value.description
     }
 }
 
 extension Parameter: ExpressibleByDictionaryLiteral {
-    public init(dictionaryLiteral elements: (ParameterNames, Value)...) {
-        let (key, value) = elements.first!
-        self.init(key: key, value: value)
+    public init(dictionaryLiteral elements: (Name, ParameterValue)...) {
+        let (name, value) = elements.first!
+        self.init(name: name, value: value)
     }
 }

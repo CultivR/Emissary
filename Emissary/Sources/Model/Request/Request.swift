@@ -7,16 +7,9 @@
 //
 
 extension URLRequest {
-    init(baseURL: URL, path: Path, method: Method, headers: [Header], queryItems: [URLQueryItem], body: Data?) {
-        let pathComponent = path.stringValue
-        let url = baseURL.appendingPathComponent(pathComponent)
-        
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
-        if queryItems.count > 0 {
-            components.queryItems = queryItems
-        }
-        
-        self.init(url: components.url!)
+    init(baseURL: URL, path: Path, method: Method, headers: [Header], queryItems: [URLQueryItem], body: Data?) {        
+        let url = URL(baseURL: baseURL, path: path, queryItems: queryItems)
+        self.init(url: url)
         
         httpBody = body
         httpMethod = method.rawValue

@@ -16,4 +16,12 @@ public extension Payload {
         body = { try! $0.encode(value) }
         headers = [.contentType(.encoded(.json))]
     }
+    
+    init<ParameterNames: ParameterName>(urlEncodedParameters: [Parameter<ParameterNames>]) {
+        let string = urlEncodedParameters.map { "\($0.nameString)=\($0.valueString)" }.joined(separator: "&")
+        let bodyString = string.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        
+        body = { _ in bodyString.data(using: .utf8)! }
+        headers = [.contentType(.encoded(.url))]
+    }
 }

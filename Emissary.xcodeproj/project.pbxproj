@@ -43,8 +43,6 @@
 		1713B17B227B5BC60026BEB6 /* AuthorizationParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B179227B5AFA0026BEB6 /* AuthorizationParameter.swift */; };
 		1713B17E227B5C580026BEB6 /* AuthorizationResponseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B17D227B5C580026BEB6 /* AuthorizationResponseType.swift */; };
 		1713B17F227B5E280026BEB6 /* AuthorizationResponseType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B17D227B5C580026BEB6 /* AuthorizationResponseType.swift */; };
-		1713B182227B6A730026BEB6 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B181227B6A730026BEB6 /* String.swift */; };
-		1713B183227B6FC40026BEB6 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B181227B6A730026BEB6 /* String.swift */; };
 		1713B185227B75610026BEB6 /* ParamaterValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B184227B75610026BEB6 /* ParamaterValue.swift */; };
 		1713B186227B75EC0026BEB6 /* ParamaterValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B184227B75610026BEB6 /* ParamaterValue.swift */; };
 		1713B189227B7D9E0026BEB6 /* AuthorizationAPI+AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1713B188227B7D9E0026BEB6 /* AuthorizationAPI+AccessToken.swift */; };
@@ -92,7 +90,6 @@
 		1713B176227B56B10026BEB6 /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
 		1713B179227B5AFA0026BEB6 /* AuthorizationParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationParameter.swift; sourceTree = "<group>"; };
 		1713B17D227B5C580026BEB6 /* AuthorizationResponseType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationResponseType.swift; sourceTree = "<group>"; };
-		1713B181227B6A730026BEB6 /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		1713B184227B75610026BEB6 /* ParamaterValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParamaterValue.swift; sourceTree = "<group>"; };
 		1713B188227B7D9E0026BEB6 /* AuthorizationAPI+AccessToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthorizationAPI+AccessToken.swift"; sourceTree = "<group>"; };
 		1713B18B227B852B0026BEB6 /* AuthorizationCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationCode.swift; sourceTree = "<group>"; };
@@ -155,7 +152,6 @@
 		17053DF92242D4630022A69D /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				1713B180227B6A6E0026BEB6 /* Base */,
 				175D9A512239694B00DC0D6B /* Path */,
 				175D9A5C22396B2000DC0D6B /* Parameter */,
 				175D9A4A2238644F00DC0D6B /* Header */,
@@ -187,14 +183,6 @@
 				1713B187227B7D900026BEB6 /* AccessToken */,
 			);
 			path = Authorization;
-			sourceTree = "<group>";
-		};
-		1713B180227B6A6E0026BEB6 /* Base */ = {
-			isa = PBXGroup;
-			children = (
-				1713B181227B6A730026BEB6 /* String.swift */,
-			);
-			path = Base;
 			sourceTree = "<group>";
 		};
 		1713B187227B7D900026BEB6 /* AccessToken */ = {
@@ -451,7 +439,6 @@
 				1713B178227B56B90026BEB6 /* Authorization.swift in Sources */,
 				17072A732252EF7C0083B795 /* Response.swift in Sources */,
 				17072A662252EF7C0083B795 /* PathComponent.swift in Sources */,
-				1713B183227B6FC40026BEB6 /* String.swift in Sources */,
 				17072A752252EF7C0083B795 /* Request.swift in Sources */,
 				17072A722252EF7C0083B795 /* AccessToken.swift in Sources */,
 				17072A672252EF7C0083B795 /* PathAccessible.swift in Sources */,
@@ -494,7 +481,6 @@
 				1713B177227B56B10026BEB6 /* Authorization.swift in Sources */,
 				17EB8C881C11F91100EE9F0A /* Response.swift in Sources */,
 				175D9A4C223967A800DC0D6B /* AuthorizationType.swift in Sources */,
-				1713B182227B6A730026BEB6 /* String.swift in Sources */,
 				1713B16E227B48DC0026BEB6 /* AuthorizationError.swift in Sources */,
 				175D9A59223969D900DC0D6B /* PathAccessible.swift in Sources */,
 				1728F8852255217A006AA9E9 /* Activity.swift in Sources */,

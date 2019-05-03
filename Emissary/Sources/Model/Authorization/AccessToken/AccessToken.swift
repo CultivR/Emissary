@@ -6,37 +6,14 @@
 //  Copyright © 2015 CultivR. All rights reserved.
 //
 
-public protocol AccessToken: Codable, PathAccessible {
-    var accessToken: String { get }
-    var refreshToken: String { get }
-    var creationDate: Date { get }
-    var expirationDate: Date { get }
-    
-    init(accessToken: String, refreshToken: String, creationDate: Date, expirationDate: Date)
+public struct AccessToken {
+    let accessToken: String
+    let refreshToken: String
+    let creationDate: Date
+    let expirationDate: Date
 }
 
-public extension AccessToken {
-    // MARK: Decodable
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let accessToken = try container.decode(String.self, forKey: .accessToken)
-        let refreshToken = try container.decode(String.self, forKey: .refreshToken)
-        let expirationTime = try container.decode(Double.self, forKey: .expirationTime)
-        let creationDate = Date()
-        let expirationDate = try container.decodeIfPresent(Date.self, forKey: .expirationDate) ?? .init(timeInterval: expirationTime, since: creationDate)
-        self.init(accessToken: accessToken, refreshToken: refreshToken, creationDate: creationDate, expirationDate: expirationDate)
-    }
-    
-    // MARK: Encodable
-    func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(accessToken, forKey: .accessToken)
-        try container.encode(refreshToken, forKey: .refreshToken)
-        try container.encode(creationDate, forKey: .creationDate)
-        try container.encode(expirationDate, forKey: .expirationDate)
-    }
-}
-
+// MARK: -
 extension AccessToken {
     var isExpired: Bool {
         let currentDate = Date()
@@ -53,11 +30,11 @@ extension AccessToken {
         keychain[.accessToken] = nil
     }
     
-    static func retrieveFromKeychain() -> Self? {
+    static func retrieveFromKeychain() -> AccessToken? {
         let keychain = Keychain()
         guard let data = keychain[data: .accessToken] else { return nil }
         
-        let token = try! JSONDecoder().decode(Self.self, from: data)
+        let token = try! JSONDecoder().decode(AccessToken.self, from: data)
         return token
     }
     
@@ -71,14 +48,60 @@ extension AccessToken {
     }
 }
 
-private enum CodingKeys: String, CodingKey {
-    case accessToken
-    case refreshToken
-    case creationDate
-    case expirationTime = "expiresIn"
-    case expirationDate
+// MARK: -
+extension AccessToken: Decodable {
+    // MARK: Decodable
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let accessToken = try container.decode(String.self, forKey: .accessToken)
+        let refreshToken = try container.decode(String.self, forKey: .refreshToken)
+        
+        let creationDate = Date()
+        let expirationDate: Date
+        if let expirationTime = try container.decodeIfPresent(Double.self, forKey: .expirationTime) {
+            expirationDate = .init(timeInterval: expirationTime, since: creationDate)
+        } else {
+            expirationDate = try container.decode(Date.self, forKey: .expirationDate)
+        }
+        
+        self.init(accessToken: accessToken, refreshToken: refreshToken, creationDate: creationDate, expirationDate: expirationDate)
+    }
 }
 
+extension AccessToken: Encodable {
+    // MARK: Encodable
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(accessToken, forKey: .accessToken)
+        try container.encode(refreshToken, forKey: .refreshToken)
+        try container.encode(creationDate, forKey: .creationDate)
+        try container.encode(expirationDate, forKey: .expirationDate)
+    }
+}
+
+extension AccessToken: PathAccessible {
+    public enum PathComponents: String, PathComponent {
+        case token
+    }
+    
+    // MARK: SubpathRepresentable
+    public static var component: PathComponents {
+        return .token
+    }
+}
+
+// MARK: -
+private extension AccessToken {
+    enum CodingKeys: String, CodingKey {
+        case accessToken
+        case refreshToken
+        case creationDate
+        case expirationTime = "expiresIn"
+        case expirationDate
+    }
+}
+
+// MARK: -
 private extension String {
     static let accessToken = "accessToken"
 }

@@ -8,7 +8,7 @@
 
 public enum AuthorizationType {
     case basic(username: String, password: String)
-    case bearer(credentials: String)
+    case bearer(AccessToken)
     case jwt(token: String)
 }
 
@@ -19,8 +19,8 @@ extension AuthorizationType: CustomStringConvertible {
             let data = "\(username):\(password)".data(using: .utf8)!
             let string = data.base64EncodedString()
             return "Basic \(string)"
-        case let .bearer(credentials):
-            return "Bearer \(credentials)"
+        case let .bearer(accessToken):
+            return "Bearer \(accessToken.accessToken)"
         case let .jwt(token):
             return "JWT \(token)"
         }

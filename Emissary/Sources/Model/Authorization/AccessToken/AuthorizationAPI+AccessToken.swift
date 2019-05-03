@@ -7,10 +7,11 @@
 //
 
 public extension AuthorizationAPI {
-    typealias AccessTokenTask = Task<Void, AccessTokenType, NetworkError>
+    typealias AccessTokenTask = Task<Void, AccessToken, NetworkError>
     
     func authorize() -> AccessTokenTask {
-        return fetchAuthorizationCode().success(createSession)
+        let accessToken = AccessToken.retrieveFromKeychain()
+        return accessToken.map(Task.init) ?? fetchAuthorizationCode().success(createSession)
     }
 }
 
@@ -31,9 +32,10 @@ private extension AuthorizationAPI {
     }
     
     func createSession(using authorizationCode: AuthorizationCode) -> AccessTokenTask {
-        let path = AccessTokenType.path
-        let parameters = AccessTokenType.parameters(clientID: Self.clientID, authorizationCode: authorizationCode, redirectURI: Self.redirectURI)
-        return post(to: path, specifying: parameters)
+        let path = AccessToken.path
+        let parameters = AccessToken.parameters(clientID: Self.clientID, authorizationCode: authorizationCode, redirectURI: Self.redirectURI)
+        let success: (AccessToken) -> Void = { $0.storeInKeychain() }
+        return post(to: path, specifying: parameters).on(success: success, failure: nil)
     }
     
     static func completionHandler(fulfill: @escaping (AuthorizationCode) -> Void, reject: @escaping (NetworkError) -> Void) -> SFAuthenticationSession.CompletionHandler {

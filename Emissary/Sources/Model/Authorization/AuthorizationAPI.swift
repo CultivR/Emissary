@@ -8,7 +8,6 @@
 
 public protocol AuthorizationAPI: API where ErrorType == AuthorizationError {
     associatedtype AuthorizationType: Authorization
-    associatedtype AccessTokenType: AccessToken
     
     static var clientID: String { get }
     static var redirectURI: String { get }

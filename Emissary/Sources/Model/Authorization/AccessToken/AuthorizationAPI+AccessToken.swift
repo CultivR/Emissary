@@ -19,7 +19,8 @@ private extension AuthorizationAPI {
     typealias AuthorizationCodeTask = Task<Void, AuthorizationCode, NetworkError>
 
     func fetchAuthorizationCode() -> AuthorizationCodeTask {
-        let path = AuthorizationType.path
+        let subpath = AuthorizationType.subpath
+        let path = AuthorizationStandardType.path.appending(subpath)
         let parameters = AuthorizationType.parameters(clientID: Self.clientID, redirectURI: Self.redirectURI)
         let queryItems = parameters.map(queryItem)
         let url = URL(baseURL: Self.baseURL, path: path, queryItems: queryItems)
@@ -32,7 +33,8 @@ private extension AuthorizationAPI {
     }
     
     func createSession(using authorizationCode: AuthorizationCode) -> AccessTokenTask {
-        let path = AccessToken.path
+        let subpath = AccessToken.subpath
+        let path = AuthorizationStandardType.path.appending(subpath)
         let parameters = AccessToken.parameters(clientID: Self.clientID, authorizationCode: authorizationCode, redirectURI: Self.redirectURI)
         let success: (AccessToken) -> Void = { $0.storeInKeychain() }
         return post(to: path, specifying: parameters).on(success: success, failure: nil)

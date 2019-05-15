@@ -6,7 +6,7 @@
 //  Copyright © 2019 CultivR. All rights reserved.
 //
 
-public protocol AuthorizationAPI: API where ErrorType == AuthorizationError {
+public protocol AuthorizationAPI: API where ErrorType == AuthorizationError, AuthorizationStandardType: PathAccessible {
     associatedtype AuthorizationType: Authorization
     
     static var clientID: String { get }

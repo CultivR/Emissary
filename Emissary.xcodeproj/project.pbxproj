@@ -53,6 +53,10 @@
 		1717B5B7224AD8EA00E2ADF3 /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1717B5B6224AD8EA00E2ADF3 /* Payload.swift */; };
 		1728F8852255217A006AA9E9 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1728F8842255217A006AA9E9 /* Activity.swift */; };
 		17317FE41BAB61F100B354D4 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17317FE31BAB61F100B354D4 /* NetworkError.swift */; };
+		1744775B228CB180000FBE47 /* AuthorizationStandard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1744775A228CB180000FBE47 /* AuthorizationStandard.swift */; };
+		1744775C228CB1A5000FBE47 /* AuthorizationStandard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1744775A228CB180000FBE47 /* AuthorizationStandard.swift */; };
+		1744775E228CB3E3000FBE47 /* API+AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1744775D228CB3E3000FBE47 /* API+AccessToken.swift */; };
+		1744775F228CB3E3000FBE47 /* API+AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1744775D228CB3E3000FBE47 /* API+AccessToken.swift */; };
 		17494647227366AD0032B3D4 /* SubpathAppendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17494646227366AD0032B3D4 /* SubpathAppendable.swift */; };
 		174946482273672B0032B3D4 /* SubpathAppendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17494646227366AD0032B3D4 /* SubpathAppendable.swift */; };
 		175D9A4C223967A800DC0D6B /* AuthorizationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 175D9A4B223967A800DC0D6B /* AuthorizationType.swift */; };
@@ -100,6 +104,8 @@
 		17317FCC1BAA320400B354D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		17317FE11BAB5DCB00B354D4 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		17317FE31BAB61F100B354D4 /* NetworkError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		1744775A228CB180000FBE47 /* AuthorizationStandard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationStandard.swift; sourceTree = "<group>"; };
+		1744775D228CB3E3000FBE47 /* API+AccessToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "API+AccessToken.swift"; sourceTree = "<group>"; };
 		17494646227366AD0032B3D4 /* SubpathAppendable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubpathAppendable.swift; sourceTree = "<group>"; };
 		175D9A4B223967A800DC0D6B /* AuthorizationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationType.swift; sourceTree = "<group>"; };
 		175D9A4D223967EA00DC0D6B /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
@@ -180,6 +186,7 @@
 				1713B18B227B852B0026BEB6 /* AuthorizationCode.swift */,
 				1713B17D227B5C580026BEB6 /* AuthorizationResponseType.swift */,
 				1713B16B227A80780026BEB6 /* AuthorizationGrantType.swift */,
+				1744775A228CB180000FBE47 /* AuthorizationStandard.swift */,
 				1713B187227B7D900026BEB6 /* AccessToken */,
 			);
 			path = Authorization;
@@ -189,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				17EB8C781C109FA600EE9F0A /* AccessToken.swift */,
+				1744775D228CB3E3000FBE47 /* API+AccessToken.swift */,
 				1713B188227B7D9E0026BEB6 /* AuthorizationAPI+AccessToken.swift */,
 			);
 			path = AccessToken;
@@ -444,6 +452,7 @@
 				17072A672252EF7C0083B795 /* PathAccessible.swift in Sources */,
 				17072A772252EF7C0083B795 /* Method.swift in Sources */,
 				17072A652252EF7C0083B795 /* Path.swift in Sources */,
+				1744775F228CB3E3000FBE47 /* API+AccessToken.swift in Sources */,
 				17072A782252F9620083B795 /* View.swift in Sources */,
 				1713B186227B75EC0026BEB6 /* ParamaterValue.swift in Sources */,
 				176B540D2270E30B00730A26 /* ResponseFormat.swift in Sources */,
@@ -453,6 +462,7 @@
 				1713B17F227B5E280026BEB6 /* AuthorizationResponseType.swift in Sources */,
 				1713B17B227B5BC60026BEB6 /* AuthorizationParameter.swift in Sources */,
 				17072A712252EF7C0083B795 /* API.swift in Sources */,
+				1744775C228CB1A5000FBE47 /* AuthorizationStandard.swift in Sources */,
 				17072A6E2252EF7C0083B795 /* Encoding.swift in Sources */,
 				176B541C22710A1700730A26 /* Date.swift in Sources */,
 				17072A692252EF7C0083B795 /* SubpathRepresentable.swift in Sources */,
@@ -486,6 +496,7 @@
 				1728F8852255217A006AA9E9 /* Activity.swift in Sources */,
 				178F127D1BAC9426004B15B9 /* Header.swift in Sources */,
 				17035C481F7EFFF700E89FAF /* AccessToken.swift in Sources */,
+				1744775E228CB3E3000FBE47 /* API+AccessToken.swift in Sources */,
 				175D9A5B22396A5700DC0D6B /* SubpathRepresentable.swift in Sources */,
 				1713B185227B75610026BEB6 /* ParamaterValue.swift in Sources */,
 				175D9A502239681400DC0D6B /* Encoding.swift in Sources */,
@@ -495,6 +506,7 @@
 				1713B17E227B5C580026BEB6 /* AuthorizationResponseType.swift in Sources */,
 				1713B17A227B5AFA0026BEB6 /* AuthorizationParameter.swift in Sources */,
 				17494647227366AD0032B3D4 /* SubpathAppendable.swift in Sources */,
+				1744775B228CB180000FBE47 /* AuthorizationStandard.swift in Sources */,
 				175D9A532239695A00DC0D6B /* Subpath.swift in Sources */,
 				17622ED82245BB4700FC8BB1 /* Request.swift in Sources */,
 				176B541B227109AE00730A26 /* Date.swift in Sources */,

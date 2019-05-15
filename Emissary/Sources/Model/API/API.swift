@@ -11,6 +11,7 @@ public typealias BasicTask = Task<Void, Void, NetworkError>
 public protocol API {
     associatedtype ParameterNames: ParameterName = DefaultParameterNames
     associatedtype ErrorType: Error & Decodable
+    associatedtype AuthorizationStandardType: AuthorizationStandard = BasicAuth
     
     var customBaseURL: URL? { get }
     var authorization: AuthorizationType? { get }

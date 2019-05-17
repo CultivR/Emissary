@@ -16,7 +16,7 @@ extension AuthorizationType: CustomStringConvertible {
     public var description: String {
         switch self {
         case let .basic(username, password):
-            let data = "\(username):\(password)".data(using: .utf8)!
+            let data = Data("\(username):\(password)".utf8)
             let string = data.base64EncodedString()
             return "Basic \(string)"
         case let .bearer(accessToken):

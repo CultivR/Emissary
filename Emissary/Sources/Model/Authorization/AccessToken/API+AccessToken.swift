@@ -10,7 +10,8 @@ public extension API where AuthorizationStandardType: PathAccessible {
     func deauthorize() -> BasicTask {
         let subpath = AccessToken.subpath
         let path = AuthorizationStandardType.path.appending(subpath)
-        let success: () -> Void = { AccessToken.removeFromKeychain() }
-        return deleteResource(at: path).on(success: success, failure: nil)
+        return deleteResource(at: path).then { _, _ in
+            AccessToken.removeFromKeychain()
+        }
     }
 }

@@ -9,7 +9,6 @@
 public enum NetworkError: Error {
     case noResponse
     case noData
-    case needsAuthentication
     case couldNotParseData(Data, Error)
     case noSuccessStatusCode(HTTPURLResponse.StatusCode, Error?)
 }

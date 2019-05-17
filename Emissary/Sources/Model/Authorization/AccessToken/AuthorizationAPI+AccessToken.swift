@@ -13,6 +13,10 @@ public extension AuthorizationAPI {
         let accessToken = AccessToken.retrieveFromKeychain()
         return accessToken.map(Task.init) ?? fetchAuthorizationCode().success(createSession)
     }
+    
+    func reauthorize(using accessToken: AccessToken) -> AccessTokenTask {
+        return refreshSession(using: accessToken)
+    }
 }
 
 private extension AuthorizationAPI {
@@ -33,9 +37,18 @@ private extension AuthorizationAPI {
     }
     
     func createSession(using authorizationCode: AuthorizationCode) -> AccessTokenTask {
+        let parameters = AccessToken.parameters(clientID: Self.clientID, authorizationCode: authorizationCode, redirectURI: Self.redirectURI)
+        return updateSession(specifying: parameters)
+    }
+    
+    func refreshSession(using accessToken: AccessToken) -> AccessTokenTask {
+        let parameters = AccessToken.parameters(clientID: Self.clientID, refreshToken: accessToken.refreshToken)
+        return updateSession(specifying: parameters)
+    }
+    
+    func updateSession(specifying parameters: [AuthorizationParameter]) -> AccessTokenTask {
         let subpath = AccessToken.subpath
         let path = AuthorizationStandardType.path.appending(subpath)
-        let parameters = AccessToken.parameters(clientID: Self.clientID, authorizationCode: authorizationCode, redirectURI: Self.redirectURI)
         let success: (AccessToken) -> Void = { $0.storeInKeychain() }
         return post(to: path, specifying: parameters).on(success: success, failure: nil)
     }

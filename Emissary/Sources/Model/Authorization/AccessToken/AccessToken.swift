@@ -46,6 +46,14 @@ extension AccessToken {
             [.redirectURI: redirectURI]
         ]
     }
+    
+    static func parameters(clientID: String, refreshToken: String) -> [AuthorizationParameter] {
+        return [
+            [.clientID: clientID],
+            [.refreshToken: refreshToken],
+            [.grantType: AuthorizationGrantType.refreshToken]
+        ]
+    }
 }
 
 // MARK: -

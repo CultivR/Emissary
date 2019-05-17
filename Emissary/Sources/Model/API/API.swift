@@ -9,6 +9,8 @@
 public typealias BasicTask = Task<Void, Void, NetworkError>
 
 public protocol API {
+    typealias APITask = Task<Void, Self, NetworkError>
+    
     associatedtype ParameterNames: ParameterName = DefaultParameterNames
     associatedtype ErrorType: Error & Decodable
     associatedtype AuthorizationStandardType: AuthorizationStandard = BasicAuth
@@ -23,6 +25,8 @@ public protocol API {
     static var dateFormat: String? { get }
     static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy { get }
     static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy { get }
+    
+    func refreshAuthorization() -> APITask?
     
     static func indicateRequestActive(_ active: Bool)
 }
@@ -42,6 +46,10 @@ public extension API {
     
     static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy {
         return dateFormatter.map(JSONEncoder.DateEncodingStrategy.formatted) ?? .iso8601
+    }
+    
+    func refreshAuthorization() -> APITask? {
+        return nil
     }
     
     func queryItem<ParameterNames>(for parameter: Parameter<ParameterNames>) -> URLQueryItem {
@@ -121,6 +129,13 @@ public extension API {
 }
 
 private extension API {
+    var needsAuthorizationRefresh: Bool {
+        if case let .bearer(accessToken)? = authorization {
+            return accessToken.isExpired
+        }
+        return false
+    }
+    
     static var decoder: JSONDecoder {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -158,6 +173,10 @@ private extension API {
     }
     
     func request<Resource, Progress>(method: Method, path: Path, queryItems: [URLQueryItem] = [], payload: Payload? = nil, parse: @escaping (Data) throws -> Resource) -> Task<Progress, Resource, NetworkError> {
+        guard !needsAuthorizationRefresh else {
+            return requestAfterAuthorizationRefresh(method: method, path: path, queryItems: queryItems, payload: payload, parse: parse)
+        }
+        
         let baseURL = customBaseURL ?? Self.baseURL
         let headers = self.headers(for: payload)
         let body = payload?.body(Self.encoder)
@@ -169,6 +188,16 @@ private extension API {
 
             Self.indicateRequestActive(true)
             dataTask.resume()
+        }
+    }
+    
+    func requestAfterAuthorizationRefresh<Resource, Progress>(method: Method, path: Path, queryItems: [URLQueryItem], payload: Payload?, parse: @escaping (Data) throws -> Resource) -> Task<Progress, Resource, NetworkError> {
+        guard let task = refreshAuthorization() else {
+            return request(method: method, path: path, queryItems: queryItems, payload: payload, parse: parse)
+        }
+        
+        return task.success { api in
+            api.request(method: method, path: path, queryItems: queryItems, payload: payload, parse: parse)
         }
     }
     

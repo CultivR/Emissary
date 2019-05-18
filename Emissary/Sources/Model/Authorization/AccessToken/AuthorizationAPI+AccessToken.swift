@@ -9,9 +9,13 @@
 public extension AuthorizationAPI {
     typealias AccessTokenTask = Task<Void, AccessToken, NetworkError>
     
-    func authorize() -> AccessTokenTask {
-        let accessToken = AccessToken.retrieveFromKeychain()
-        return accessToken.map(Task.init) ?? fetchAuthorizationCode().success(createSession)
+    func authorize(usingStoredAccessToken: Bool) -> AccessTokenTask {
+        if usingStoredAccessToken {
+            let accessToken = AccessToken.retrieveFromKeychain()
+            return accessToken.map(Task.init) ?? .init(error: .noData)
+        } else {
+            return fetchAuthorizationCode().success(createSession)
+        }
     }
     
     func reauthorize(using accessToken: AccessToken) -> AccessTokenTask {

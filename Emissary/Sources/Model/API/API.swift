@@ -16,12 +16,12 @@ public protocol API {
     associatedtype AuthorizationStandardType: AuthorizationStandard = BasicAuth
     
     var customBaseURL: URL? { get }
+    var responseFormat: ResponseFormat { get }
     var authorization: AuthorizationType? { get }
     var customHeaderParameters: [Parameter<ParameterNames>] { get }
     var apiKey: Parameter<ParameterNames>? { get }
     
     static var baseURL: URL { get }
-    static var responseFormat: ResponseFormat { get }
     static var dateFormat: String? { get }
     static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy { get }
     static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy { get }
@@ -33,11 +33,11 @@ public protocol API {
 
 public extension API {
     var customBaseURL: URL? { return nil }
+    var responseFormat: ResponseFormat { return .plain }
     var authorization: AuthorizationType? { return nil }
     var customHeaderParameters: [Parameter<ParameterNames>] { return [] }
     var apiKey: Parameter<ParameterNames>? { return nil }
     
-    static var responseFormat: ResponseFormat { return .plain }
     static var dateFormat: String? { return nil }
     
     static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy {
@@ -59,23 +59,23 @@ public extension API {
     }
     
     func getResource<Resource: Decodable>(at path: Path) -> Task<Void, Resource, NetworkError> {
-        return request(method: .get, path: path, parse: Self.parse)
+        return request(method: .get, path: path, parse: parse)
     }
     
     func getResource<Resource: Decodable, ResourceParameterNames>(at path: Path, specifiedBy parameters: [Parameter<ResourceParameterNames>]) -> Task<Void, Resource, NetworkError> {
         let queryItems = parameters.map(queryItem)
-        return request(method: .get, path: path, queryItems: queryItems, parse: Self.parse)
+        return request(method: .get, path: path, queryItems: queryItems, parse: parse)
     }
     
     func getResources<Resource: Decodable & Collection>() -> Task<Void, Resource, NetworkError> where Resource.Element: PathAccessible {
         let path = Resource.Element.path
-        return request(method: .get, path: path, parse: Self.parse)
+        return request(method: .get, path: path, parse: parse)
     }
     
     func getResources<Resource: Decodable & Collection, ResourceParameterNames>(specifiedBy parameters: [Parameter<ResourceParameterNames>]) -> Task<Void, Resource, NetworkError> where Resource.Element: PathAccessible {
         let path = Resource.Element.path
         let queryItems = parameters.map(queryItem)
-        return request(method: .get, path: path, queryItems: queryItems, parse: Self.parse)
+        return request(method: .get, path: path, queryItems: queryItems, parse: parse)
     }
     
     func post<Progress>(to path: Path) -> Task<Progress, Void, NetworkError> {
@@ -89,7 +89,7 @@ public extension API {
     
     func post<ReturnedResource: Decodable, Progress, ResourceParameterNames>(to path: Path, specifying parameters: [Parameter<ResourceParameterNames>]) -> Task<Progress, ReturnedResource, NetworkError> {
         let payload = Payload(urlEncodedParameters: parameters)
-        return request(method: .post, path: path, payload: payload, parse: Self.parse)
+        return request(method: .post, path: path, payload: payload, parse: parse)
     }
     
     func postResource<Resource: Encodable, Progress>(_ resource: Resource, at path: Path) -> Task<Progress, Void, NetworkError> {
@@ -99,23 +99,23 @@ public extension API {
     
     func postResource<Resource: Encodable, ReturnedResource: Decodable, Progress>(_ resource: Resource, at path: Path) -> Task<Progress, ReturnedResource, NetworkError> {
         let payload = Payload(for: resource)
-        return request(method: .post, path: path, payload: payload, parse: Self.parse)
+        return request(method: .post, path: path, payload: payload, parse: parse)
     }
     
     func postResource<Resource: Encodable, ReturnedResource: Decodable & PathAccessible, Progress>(_ resource: Resource) -> Task<Progress, ReturnedResource, NetworkError> {
         let path = ReturnedResource.path
         let payload = Payload(for: resource)
-        return request(method: .post, path: path, payload: payload, parse: Self.parse)
+        return request(method: .post, path: path, payload: payload, parse: parse)
     }
     
     func putResource<Resource: Encodable, ReturnedResource: Decodable>(_ resource: Resource, at path: Path) -> Task<Void, ReturnedResource, NetworkError> {
         let payload = Payload(for: resource)
-        return request(method: .put, path: path, payload: payload, parse: Self.parse)
+        return request(method: .put, path: path, payload: payload, parse: parse)
     }
     
     func patchResource<Resource: Encodable, ReturnedResource: Decodable>(_ resource: Resource, at path: Path) -> Task<Void, ReturnedResource, NetworkError> {
         let payload = Payload(for: resource)
-        return request(method: .patch, path: path, payload: payload, parse: Self.parse)
+        return request(method: .patch, path: path, payload: payload, parse: parse)
     }
     
     func deleteResource(at path: Path) -> BasicTask {
@@ -236,13 +236,13 @@ private extension API {
         return data
     }
     
-    static func parse<Resource: Decodable>(_ data: Data) throws -> Resource {
+    func parse<Resource: Decodable>(_ data: Data) throws -> Resource {
         do {
             switch responseFormat {
             case .plain:
-                return try decoder.decode(Resource.self, from: data)
+                return try Self.decoder.decode(Resource.self, from: data)
             case .jsonAPI:
-                return try decoder.decode(Wrapper<Resource>.self, from: data).data
+                return try Self.decoder.decode(Wrapper<Resource>.self, from: data).data
             }
         } catch {
             throw NetworkError.couldNotParseData(data, error)

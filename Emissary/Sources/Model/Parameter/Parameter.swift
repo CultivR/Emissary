@@ -9,11 +9,19 @@
 public struct Parameter<Name: ParameterName> {    
     private let name: Name
     private let value: ParameterValue
+    private let index: Int?
+    
+    init(name: Name, value: ParameterValue, index: Int? = nil) {
+        self.name = name
+        self.value = value
+        self.index = index
+    }
 }
 
 extension Parameter {
     var nameString: String {
-        return name.rawValue
+        let suffix = index.map { "[\($0)]" } ?? ""
+        return name.rawValue + suffix
     }
     
     var valueString: String {

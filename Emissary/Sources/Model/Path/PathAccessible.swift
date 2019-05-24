@@ -27,8 +27,8 @@ public extension PathAccessible {
         return .init(components: subpath.components)
     }
     
-    static func path<Value: CustomStringConvertible>(to value: Value) -> Path {
-        let subpath = self.subpath(to: value)
+    static func path<Value: CustomStringConvertible>(to value: Value, to pathComponents: PathComponents...) -> Path {
+        let subpath = self.subpath(to: value, to: pathComponents)
         return .init(components: subpath.components)
     }
 }

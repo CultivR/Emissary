@@ -40,9 +40,15 @@ public extension SubpathRepresentable {
         return .init(components: components)
     }
     
-    static func subpath<Value: CustomStringConvertible>(to value: Value) -> Subpath {
+    static func subpath<Value: CustomStringConvertible>(to value: Value, to pathComponents: PathComponents...) -> Subpath {
+        return subpath(to: value, to: pathComponents)
+    }
+}
+
+extension SubpathRepresentable {
+    static func subpath<Value: CustomStringConvertible>(to value: Value, to pathComponents: [PathComponents]) -> Subpath {
         let string = String(describing: value)
-        let components: [PathComponent] = [Self.component, string]
+        let components: [PathComponent] = [Self.component, string] + pathComponents
         return .init(components: components)
     }
 }

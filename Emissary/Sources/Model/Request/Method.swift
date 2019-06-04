@@ -13,3 +13,10 @@ public enum Method: String {
     case delete = "DELETE"
     case patch = "PATCH"
 }
+
+// MARK: -
+extension Method: CustomStringConvertible {
+    public var description: String {
+        return rawValue
+    }
+}

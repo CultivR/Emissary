@@ -12,3 +12,19 @@ public enum NetworkError: Error {
     case couldNotParseData(Data, Error)
     case noSuccessStatusCode(HTTPURLResponse.StatusCode, Error?)
 }
+
+// MARK: -
+extension NetworkError: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .noResponse:
+            return "No Response"
+        case .noData:
+            return "No Data"
+        case let .couldNotParseData(_, error):
+            return String(describing: error)
+        case let .noSuccessStatusCode(statusCode, _):
+            return statusCode.description
+        }
+    }
+}

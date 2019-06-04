@@ -182,6 +182,8 @@ private extension API {
         let body = payload?.body(Self.encoder)
         let request = URLRequest(baseURL: baseURL, path: path, method: method, headers: headers, queryItems: queryItems, body: body)
         
+        Self.log(method: method, baseURL: baseURL, request: request, path: path, headers: headers)
+        
         return Task { _, fulfill, reject, configure in
             let completionHandler = Self.completionHandler(fulfill: fulfill, reject: reject, parse: parse)
             let dataTask = URLSession.shared.dataTask(with: request, completionHandler: completionHandler)
@@ -201,6 +203,20 @@ private extension API {
         }
     }
     
+    
+    func parse<Resource: Decodable>(_ data: Data) throws -> Resource {
+        do {
+            switch responseFormat {
+            case .plain:
+                return try Self.decoder.decode(Resource.self, from: data)
+            case .jsonAPI:
+                return try Self.decoder.decode(Wrapper<Resource>.self, from: data).data
+            }
+        } catch {
+            throw NetworkError.couldNotParseData(data, error)
+        }
+    }
+    
     static func value<ParameterNames>(for parameter: Parameter<ParameterNames>) -> String {
         let formatter = dateFormatter ?? ISO8601DateFormatter()
         return parameter.valueString(with: formatter)
@@ -210,10 +226,12 @@ private extension API {
         return { data, response, error in
             let completion: () -> Void
             do {
+                logResponseData(data)
                 let data = try process(data, with: response)
                 let resource = try parse(data)
                 completion = { fulfill(resource) }
             } catch {
+                log(error)
                 completion = { reject(error as! NetworkError) }
             }
             DispatchQueue.main.async {
@@ -236,16 +254,30 @@ private extension API {
         return data
     }
     
-    func parse<Resource: Decodable>(_ data: Data) throws -> Resource {
-        do {
-            switch responseFormat {
-            case .plain:
-                return try Self.decoder.decode(Resource.self, from: data)
-            case .jsonAPI:
-                return try Self.decoder.decode(Wrapper<Resource>.self, from: data).data
-            }
-        } catch {
-            throw NetworkError.couldNotParseData(data, error)
+    static func log(method: Method, baseURL: URL, request: URLRequest, path: Path, headers: [Header]) {
+        guard let url = request.url else { return }
+        
+        let host = url.host!
+        let basePath = baseURL.path
+        let queryString = url.query ?? ""
+        
+        print("\(method) \(basePath)/\(path)\(queryString)")
+        headers.forEach { print($0) }
+        print("Host: \(host)")
+    }
+    
+    static func logResponseData(_ data: Data?) {
+        let response = data
+            .flatMap { try? JSONSerialization.jsonObject(with: $0, options: []) }
+            .flatMap { try? JSONSerialization.data(withJSONObject: $0, options: [.prettyPrinted]) }
+            .map { String(decoding: $0, as: UTF8.self) }
+        
+        if let response = response {
+            print("Response:\n\(response)\n")
         }
+    }
+    
+    static func log(_ error: Error) {
+        print("Error: \(error)\n")
     }
 }

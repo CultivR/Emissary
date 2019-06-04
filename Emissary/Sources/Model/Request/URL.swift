@@ -8,7 +8,7 @@
 
 extension URL {
     init(baseURL: URL, path: Path, queryItems: [URLQueryItem]) {
-        let pathComponent = path.stringValue
+        let pathComponent = path.description
         let url = baseURL.appendingPathComponent(pathComponent)
         
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!

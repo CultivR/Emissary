@@ -10,8 +10,9 @@ public struct Path {
     let components: [PathComponent]
 }
 
-extension Path {
-    var stringValue: String {
+// MARK: -
+extension Path: CustomStringConvertible {
+    public var description: String {
         return components.map { $0.rawValue }.joined(separator: .slash)
     }
 }
@@ -22,6 +23,7 @@ extension Path: SubpathAppendable {
     }
 }
 
+// MARK: -
 private extension String {
     static let slash = "/"
 }

@@ -10,6 +10,7 @@ enum Header {
     case accept(ContentType)
     case contentType(ContentType)
     case contentLength(Int)
+    case contentDisposition(ContentDisposition)
     case authorization(AuthorizationType)
     case custom(key: String, value: String)
 }
@@ -23,6 +24,8 @@ extension Header {
             return "Content-Type"
         case .contentLength:
             return "Content-Length"
+        case .contentDisposition:
+            return "Content-Disposition"
         case .authorization:
             return "Authorization"
         case let .custom(key, _):
@@ -35,6 +38,8 @@ extension Header {
         case let .accept(value), let .contentType(value):
             return value.description
         case let .contentLength(value):
+            return value.description
+        case let .contentDisposition(value):
             return value.description
         case let .authorization(value):
             return value.description

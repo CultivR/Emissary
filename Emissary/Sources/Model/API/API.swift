@@ -93,38 +93,58 @@ public extension API {
     }
     
     func postResource<Resource: Encodable, Progress>(_ resource: Resource, at path: Path) -> Task<Progress, Void, NetworkError> {
-        let payload = Payload(for: resource)
+        let payload = Payload(value: resource)
         return request(method: .post, path: path, payload: payload) { _ in }
     }
     
     func postResource<Resource: Encodable, ReturnedResource: Decodable, Progress>(_ resource: Resource, at path: Path) -> Task<Progress, ReturnedResource, NetworkError> {
-        let payload = Payload(for: resource)
+        let payload = Payload(value: resource)
         return request(method: .post, path: path, payload: payload, parse: parse)
     }
     
     func postResource<Resource: Encodable, ReturnedResource: Decodable & PathAccessible, Progress>(_ resource: Resource) -> Task<Progress, ReturnedResource, NetworkError> {
         let path = ReturnedResource.path
-        let payload = Payload(for: resource)
+        let payload = Payload(value: resource)
+        return request(method: .post, path: path, payload: payload, parse: parse)
+    }
+    
+    func postResource<ResourceParameterNames: ParameterName, ReturnedResource: Decodable, Progress>(_ resource: UIImage, at path: Path, with name: ResourceParameterNames) -> Task<Progress, ReturnedResource, NetworkError> {
+        let payload = Payload(name: name,  value: resource)
+        return request(method: .post, path: path, payload: payload, parse: parse)
+    }
+    
+    func postResource<ResourceParameterNames: ParameterName, ReturnedResource: Decodable & PathAccessible, Progress>(_ resource: UIImage, with name: ResourceParameterNames) -> Task<Progress, ReturnedResource, NetworkError> {
+        let path = ReturnedResource.path
+        let payload = Payload(name: name,  value: resource)
         return request(method: .post, path: path, payload: payload, parse: parse)
     }
     
     func putResource<Resource: Encodable, ReturnedResource: Decodable>(_ resource: Resource, at path: Path) -> Task<Void, ReturnedResource, NetworkError> {
-        let payload = Payload(for: resource)
+        let payload = Payload(value: resource)
         return request(method: .put, path: path, payload: payload, parse: parse)
     }
     
     func patchResource<Resource: Encodable, ReturnedResource: Decodable>(_ resource: Resource, at path: Path) -> Task<Void, ReturnedResource, NetworkError> {
-        let payload = Payload(for: resource)
+        let payload = Payload(value: resource)
         return request(method: .patch, path: path, payload: payload, parse: parse)
     }
-    
+
     func deleteResource(at path: Path) -> BasicTask {
         return request(method: .delete, path: path) { _ in }
+    }
+    
+    func deleteResource<ReturnedResource: Decodable>(at path: Path) -> Task<Void, ReturnedResource, NetworkError> {
+        return request(method: .delete, path: path, parse: parse)
     }
     
     func deleteResource<Resource: PathAccessible>(ofType type: Resource.Type) -> BasicTask {
         let path = type.path
         return request(method: .delete, path: path) { _ in }
+    }
+    
+    func deleteResource<Resource: PathAccessible, ReturnedResource: Decodable>(ofType type: Resource.Type) -> Task<Void, ReturnedResource, NetworkError> {
+        let path = type.path
+        return request(method: .delete, path: path, parse: parse)
     }
 }
 
@@ -182,7 +202,7 @@ private extension API {
         let body = payload?.body(Self.encoder)
         let request = URLRequest(baseURL: baseURL, path: path, method: method, headers: headers, queryItems: queryItems, body: body)
         
-        Self.log(method: method, baseURL: baseURL, request: request, path: path, headers: headers)
+        Self.log(method: method, baseURL: baseURL, request: request, path: path, headers: headers, body: body)
         
         return Task { _, fulfill, reject, configure in
             let completionHandler = Self.completionHandler(fulfill: fulfill, reject: reject, parse: parse)
@@ -254,16 +274,25 @@ private extension API {
         return data
     }
     
-    static func log(method: Method, baseURL: URL, request: URLRequest, path: Path, headers: [Header]) {
+    static func log(method: Method, baseURL: URL, request: URLRequest, path: Path, headers: [Header], body: Data?) {
         guard let url = request.url else { return }
         
         let host = url.host!
         let basePath = baseURL.path
-        let queryString = url.query ?? ""
+        let queryString = url.query.map { "?\($0)" } ?? ""
         
         print("\(method) \(basePath)/\(path)\(queryString)")
         headers.forEach { print($0) }
         print("Host: \(host)")
+        
+        let payload = body
+            .flatMap { try? JSONSerialization.jsonObject(with: $0, options: []) }
+            .flatMap { try? JSONSerialization.data(withJSONObject: $0, options: [.prettyPrinted]) }
+            .map { String(decoding: $0, as: UTF8.self) }
+
+        if let payload = payload {
+            print("Body:\n\(payload)")
+        }
     }
     
     static func logResponseData(_ data: Data?) {
@@ -273,7 +302,7 @@ private extension API {
             .map { String(decoding: $0, as: UTF8.self) }
         
         if let response = response {
-            print("Response:\n\(response)\n")
+            print("\nResponse:\n\(response)\n")
         }
     }
     

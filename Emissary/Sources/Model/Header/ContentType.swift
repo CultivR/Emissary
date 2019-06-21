@@ -8,6 +8,8 @@
 
 enum ContentType {
     case encoded(Encoding)
+    case multiPartFormData(boundary: String)
+    case mimeType(MIMEType)
 }
 
 extension ContentType: CustomStringConvertible {
@@ -15,6 +17,10 @@ extension ContentType: CustomStringConvertible {
         switch self {
         case let .encoded(encoding):
             return "application/\(encoding.rawValue)"
+        case let .multiPartFormData(boundary):
+            return "multipart/form-data; boundary=\(boundary)"
+        case let .mimeType(type):
+            return "image/\(type.rawValue)"
         }
     }
 }

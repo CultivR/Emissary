@@ -1,2 +1,5 @@
-github "ReactKit/SwiftTask" "swift/4.0"
-github "kishikawakatsumi/KeychainAccess" ~> 3.1.2
+github "Cultivr/Decodable" "master"
+github "Cultivr/Cache" "master"
+github "Cultivr/SwiftTask" "master"
+github "Cultivr/Tarmac" "master"
+github "kishikawakatsumi/KeychainAccess"

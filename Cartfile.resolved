@@ -1,2 +1,5 @@
-github "ReactKit/SwiftTask" "14ce2959660e06cd34a890306607c84fe956f497"
-github "kishikawakatsumi/KeychainAccess" "v3.1.2"
+github "Cultivr/Cache" "6edaab43f0bff6be822eff37b59874dd079923f1"
+github "Cultivr/Decodable" "42169c2dc48874e1ba18e90c0c2bffdd6dd58356"
+github "Cultivr/SwiftTask" "37542349d47784b65f0ed25ddb44bdcbe14b33c8"
+github "Cultivr/Tarmac" "ae68973b5bbcaff346f6351a74c0b6acf00dc8fa"
+github "kishikawakatsumi/KeychainAccess" "v4.2.1"
